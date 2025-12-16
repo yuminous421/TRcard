@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动式新年祝福</title>
+    <style>
+        /* CSS 样式部分 */
+        body {
+            background: linear-gradient(135deg, #1e4d2b, #38761d); /* 绿色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Georgia', serif;
+            padding: 20px;
+        }
+
+        .card-wrapper {
+            width: 90%;
+            max-width: 600px;
+            height: 400px;
+            position: relative;
+            perspective: 1000px; /* 启用 3D 转换 */
+        }
+
+        /* 封面样式 */
+        .card-cover {
+            width: 100%;
+            height: 100%;
+            background-color: #c0392b; /* 圣诞红 */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.8s, opacity 0.8s;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .card-cover h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #a83023;
+        }
+
+        /* 内容样式 */
+        .card-content {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: #fdfae7; /* 奶油色 */
+            color: #333;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            opacity: 0; 
+            transform: rotateY(-180deg); 
+            transition: transform 0.8s, opacity 0.8s;
+            white-space: pre-wrap; /* 保留换行和空格 */
+            text-align: left;
+            overflow-y: auto; 
+        }
+
+        /* 打开卡片时的效果 */
+        .card-wrapper.open .card-cover {
+            transform: rotateY(180deg);
+            opacity: 0;
+            pointer-events: none; 
+        }
+
+        .card-wrapper.open .card-content {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+
+        /* 打字机和光标样式 */
+        #typing-text {
+            font-size: 1.2em;
+            color: #1e4d2b; 
+            line-height: 1.8;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: gold; 
+            margin-left: 5px;
+            animation: blink 1s step-end infinite; 
+        }
+
+        @keyframes blink {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card-wrapper" id="cardWrapper">
+    
+    <div class="card-cover" id="cardCover">
+        <h2>🎉 點擊這裡，解鎖新年祝福！ 🎉</h2>
+        <p>（想跟你說的話）</p>
+    </div>
+    
+    <div class="card-content" id="cardContent">
+        <h1 id="typing-text"></h1>
+        <span class="cursor"></span>
+    </div>
+
+</div>
+
+<script>
+    // JavaScript 逻辑部分
+    
+    // 您的文章内容
+    const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遣詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。"; 
+
+    const cardCover = document.getElementById('cardCover');
+    const cardWrapper = document.getElementById('cardWrapper');
+    const textElement = document.getElementById('typing-text');
+    const cursorElement = document.querySelector('.cursor');
+
+    const typingSpeed = 60; 
+    let index = 0;
+
+    // 1. 打字机函数
+    function typeText() {
+        if (index < textToType.length) {
+            let char = textToType.charAt(index);
+            
+            if (char === '\n') {
+                textElement.innerHTML += '<br>';
+            } else {
+                textElement.innerHTML += char;
+            }
+            index++;
+            setTimeout(typeText, typingSpeed);
+        } else {
+            cursorElement.style.display = 'none'; 
+        }
+    }
+
+    // 2. 打开卡片函数
+    function openCard() {
+        cardWrapper.classList.add('open');
+        
+        setTimeout(() => {
+            typeText();
+        }, 800); 
+    }
+
+    // 3. 绑定点击事件：当页面加载完成后，监听点击事件
+    window.onload = function() {
+        cardCover.addEventListener('click', openCard);
+    }
+</script>
+
+</body>
+</html>
