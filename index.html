@@ -2,9 +2,10 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>飛鴿傳信</title>
     <style>
+        /* CSS 樣式：節慶主題與翻轉效果 */
         body {
             background: linear-gradient(135deg, #1e4d2b, #38761d);
             display: flex;
@@ -15,17 +16,18 @@
             font-family: 'Georgia', 'Microsoft JhengHei', serif;
             padding: 20px;
             overflow: hidden;
-            cursor: pointer; /* 提示使用者可以點擊 */
+            touch-action: manipulation;
         }
 
         .card-wrapper {
-            width: 90%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 500px;
             height: 450px;
             position: relative;
             perspective: 1000px;
         }
 
+        /* 封面樣式 */
         .card-cover {
             position: absolute;
             z-index: 2;
@@ -39,13 +41,20 @@
             align-items: center;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
             text-align: center;
             padding: 20px;
             backface-visibility: hidden;
             box-sizing: border-box;
         }
 
+        .card-cover h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #a83023;
+        }
+
+        /* 內容樣式 */
         .card-content {
             position: absolute;
             top: 0;
@@ -53,21 +62,24 @@
             height: 100%;
             background: #fdfae7;
             color: #333;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             opacity: 0; 
             transform: rotateY(-180deg); 
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
             white-space: pre-wrap;
             text-align: left;
             overflow-y: auto;
             box-sizing: border-box;
+            -webkit-overflow-scrolling: touch; /* 優化手機滾動 */
         }
 
+        /* 打開狀態 */
         .card-wrapper.open .card-cover {
             transform: rotateY(180deg);
             opacity: 0;
+            pointer-events: none;
         }
 
         .card-wrapper.open .card-content {
@@ -76,7 +88,7 @@
         }
 
         #typing-text {
-            font-size: 1.1em;
+            font-size: 1.05em;
             color: #1e4d2b; 
             line-height: 1.8;
             margin: 0;
@@ -97,18 +109,23 @@
             50% { opacity: 1; }
         }
 
-        /* 底部提示文字 */
-        .click-hint {
-            position: absolute;
-            bottom: 20px;
-            color: rgba(255,255,255,0.7);
+        .hint-text {
+            margin-top: 20px;
             font-size: 0.9em;
+            color: #ffeb3b;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
 
-<audio id="bgm" loop>
+<audio id="bgm" loop preload="auto">
     <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 
@@ -116,15 +133,13 @@
     <div class="card-cover" id="cardCover">
         <h2>🎄 聖誕新年特別問候 🎄</h2>
         <p>（想說給你聽）</p>
-        <p style="margin-top: 25px; font-size: 1.2em; color: #ffeb3b; font-weight: bold;">請點擊卡片開啟驚喜 ✨</p>
+        <p class="hint-text">✨ 點擊螢幕開啟驚喜與音樂 ✨</p>
     </div>
     
     <div class="card-content" id="cardContent">
         <p id="typing-text"></p><span class="cursor"></span>
     </div>
 </div>
-
-<div class="click-hint">點擊畫面任何地方以播放音樂</div>
 
 <script>
     const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遣詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。\n\n Ps現在儼然可以拋棄Excel啦!與AI協作的GAS會更便捷精確😊😊\n\n 期待與你的再次相遇😄😄"; 
@@ -134,11 +149,12 @@
     const cursorElement = document.querySelector('.cursor');
     const bgm = document.getElementById('bgm');
 
-    // 打字速度：150ms (慢速，更有氛圍)
-    const typingSpeed = 150; 
+    // 打字速度設定：180 毫秒 (較慢的速度，更有閱讀氛圍)
+    const typingSpeed = 180; 
     let index = 0;
     let hasStarted = false;
 
+    // 打字函數
     function typeText() {
         if (index < textToType.length) {
             let char = textToType.charAt(index);
@@ -148,38 +164,52 @@
                 textElement.innerHTML += char;
             }
             index++;
+            // 自動向下滾動以顯示最新文字
+            const content = document.getElementById('cardContent');
+            content.scrollTop = content.scrollHeight;
+            
             setTimeout(typeText, typingSpeed);
         } else {
             cursorElement.style.display = 'none'; 
         }
     }
 
-    // 啟動函數：這是解鎖音訊的關鍵
+    // 啟動函數：音訊解鎖與動畫觸發
     function startSequence() {
         if (hasStarted) return;
         hasStarted = true;
 
-        // 隱藏提示文字
-        const hint = document.querySelector('.click-hint');
-        if(hint) hint.style.display = 'none';
-
         // 播放音樂
-        bgm.volume = 0.4;
-        bgm.play().catch(e => console.log("播放失敗:", e));
+        bgm.volume = 0.5;
+        let playPromise = bgm.play();
 
-        // 開卡動畫
+        // 處理播放結果
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log("音樂成功解鎖並播放");
+            }).catch(error => {
+                console.log("播放被攔截，這通常發生在手機未點擊前:", error);
+            });
+        }
+
+        // 啟動翻頁動畫
         cardWrapper.classList.add('open');
         
-        // 延遲開始打字
+        // 延遲後開始緩慢打字
         setTimeout(() => {
             textElement.innerHTML = '';
             typeText();
-        }, 1500); 
+        }, 1200); 
     }
 
-    // 監聽點擊與觸摸 (手機與電腦皆適用)
+    // 關鍵：監聽「點擊」與「觸摸」事件來繞過手機自動播放限制
     document.addEventListener('click', startSequence);
     document.addEventListener('touchstart', startSequence);
+
+    // 備案：4秒後自動嘗試啟動 (若使用者沒點擊，此時音樂可能仍無聲，直到點擊發生)
+    window.onload = function() {
+        setTimeout(startSequence, 4000);
+    }
 </script>
 
 </body>
