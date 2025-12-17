@@ -21,7 +21,7 @@
         .card-wrapper {
             width: 100%;
             max-width: 500px;
-            height: 450px;
+            height: 480px;
             position: relative;
             perspective: 1000px;
         }
@@ -63,7 +63,6 @@
             text-align: left;
             overflow-y: auto;
             box-sizing: border-box;
-            -webkit-overflow-scrolling: touch;
         }
 
         .card-wrapper.open .card-cover {
@@ -84,33 +83,18 @@
             margin: 0;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1.2em;
-            background-color: gold; 
-            margin-left: 5px;
-            vertical-align: middle;
-            animation: blink 1s step-end infinite; 
-        }
-
-        @keyframes blink {
-            from, to { opacity: 0; }
-            50% { opacity: 1; }
-        }
-
         .hint-text {
             margin-top: 25px;
-            font-size: 1.1em;
+            font-size: 1em;
             color: #ffeb3b;
             font-weight: bold;
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(1); }
+            0% { opacity: 0.7; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1); }
         }
     </style>
 </head>
@@ -121,26 +105,25 @@
 </audio>
 
 <div class="card-wrapper" id="cardWrapper">
-    <div class="card-cover">
+    <div class="card-cover" id="triggerArea">
         <h2>🎄 聖誕新年特別問候 🎄</h2>
         <p>（想說給你聽）</p>
-        <div class="hint-text">👉 點擊卡片開啟音樂與驚喜 👈</div>
+        <div class="hint-text">👉 點擊卡片開啟音樂與文字 👈<br><small style="font-size: 0.7em; opacity: 0.8;">(請先確認關閉手機靜音模式)</small></div>
     </div>
     
     <div class="card-content" id="cardContent">
-        <p id="typing-text"></p><span class="cursor"></span>
+        <p id="typing-text"></p>
     </div>
 </div>
 
 <script>
-    const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遣詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。\n\n Ps現在儼然可以拋棄Excel啦!與AI協作的GAS會更便捷精確😊😊\n\n 期待與你的再次相遇😄😄"; 
+    const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。\n\n Ps現在儼然可以拋棄Excel啦!與AI協作的GAS會更便捷精確😊😊\n\n 期待與你的再次相遇😄😄"; 
 
     const cardWrapper = document.getElementById('cardWrapper');
     const textElement = document.getElementById('typing-text');
-    const cursorElement = document.querySelector('.cursor');
     const bgm = document.getElementById('bgm');
+    const trigger = document.getElementById('triggerArea');
 
-    // 打字速度：180 毫秒 (慢速打字更有感覺)
     const typingSpeed = 180; 
     let index = 0;
     let hasStarted = false;
@@ -148,58 +131,34 @@
     function typeText() {
         if (index < textToType.length) {
             let char = textToType.charAt(index);
-            if (char === '\n') {
-                textElement.innerHTML += '<br>';
-            } else {
-                textElement.innerHTML += char;
-            }
+            textElement.innerHTML += (char === '\n') ? '<br>' : char;
             index++;
-            // 讓手機自動滾動到最下方
-            const content = document.getElementById('cardContent');
-            content.scrollTop = content.scrollHeight;
+            document.getElementById('cardContent').scrollTop = document.getElementById('cardContent').scrollHeight;
             setTimeout(typeText, typingSpeed);
-        } else {
-            cursorElement.style.display = 'none'; 
         }
     }
 
-    // 手機啟動的關鍵函數
-    function handleInteraction() {
+    // 手機成功的唯一路徑：使用者親自點擊
+    function startApp() {
         if (hasStarted) return;
         hasStarted = true;
 
-        console.log("偵測到點擊，啟動音訊與動畫...");
-        
-        // 1. 立即解鎖音訊 (這是手機成功的關鍵)
+        // 音訊嘗試播放
         bgm.muted = false;
-        const playPromise = bgm.play();
+        bgm.play().catch(e => console.log("音訊啟動受限"));
 
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                console.log("手機音訊播放成功");
-            }).catch(e => {
-                console.error("播放失敗，請檢查靜音鍵:", e);
-            });
-        }
-
-        // 2. 執行翻卡動畫
+        // 動畫啟動
         cardWrapper.classList.add('open');
         
-        // 3. 延遲後開始緩慢打字
         setTimeout(() => {
             textElement.innerHTML = '';
             typeText();
         }, 1200); 
     }
 
-    // 監聽電腦點擊與手機觸碰
-    document.addEventListener('mousedown', handleInteraction);
-    document.addEventListener('touchstart', handleInteraction, { passive: false });
-
-    // 備案：萬一使用者沒點，4秒後嘗試啟動（通常會無聲，直到下次點擊）
-    window.onload = function() {
-        setTimeout(handleInteraction, 4000);
-    }
+    // 移除自動播放 (window.onload)，全部交給點擊
+    trigger.addEventListener('click', startApp);
+    trigger.addEventListener('touchstart', startApp);
 </script>
 
 </body>
