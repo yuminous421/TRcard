@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>飛鴿傳信</title>
     <style>
-        /* CSS 樣式：節慶主題與翻轉效果 */
         body {
             background: linear-gradient(135deg, #1e4d2b, #38761d);
             display: flex;
@@ -27,7 +26,6 @@
             perspective: 1000px;
         }
 
-        /* 封面樣式 */
         .card-cover {
             position: absolute;
             z-index: 2;
@@ -48,13 +46,6 @@
             box-sizing: border-box;
         }
 
-        .card-cover h2 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px #a83023;
-        }
-
-        /* 內容樣式 */
         .card-content {
             position: absolute;
             top: 0;
@@ -72,10 +63,9 @@
             text-align: left;
             overflow-y: auto;
             box-sizing: border-box;
-            -webkit-overflow-scrolling: touch; /* 優化手機滾動 */
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* 打開狀態 */
         .card-wrapper.open .card-cover {
             transform: rotateY(180deg);
             opacity: 0;
@@ -110,16 +100,17 @@
         }
 
         .hint-text {
-            margin-top: 20px;
-            font-size: 0.9em;
+            margin-top: 25px;
+            font-size: 1.1em;
             color: #ffeb3b;
+            font-weight: bold;
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.6; transform: scale(1); }
         }
     </style>
 </head>
@@ -130,10 +121,10 @@
 </audio>
 
 <div class="card-wrapper" id="cardWrapper">
-    <div class="card-cover" id="cardCover">
+    <div class="card-cover">
         <h2>🎄 聖誕新年特別問候 🎄</h2>
         <p>（想說給你聽）</p>
-        <p class="hint-text">✨ 點擊螢幕開啟驚喜與音樂 ✨</p>
+        <div class="hint-text">👉 點擊卡片開啟音樂與驚喜 👈</div>
     </div>
     
     <div class="card-content" id="cardContent">
@@ -149,12 +140,11 @@
     const cursorElement = document.querySelector('.cursor');
     const bgm = document.getElementById('bgm');
 
-    // 打字速度設定：180 毫秒 (較慢的速度，更有閱讀氛圍)
+    // 打字速度：180 毫秒 (慢速打字更有感覺)
     const typingSpeed = 180; 
     let index = 0;
     let hasStarted = false;
 
-    // 打字函數
     function typeText() {
         if (index < textToType.length) {
             let char = textToType.charAt(index);
@@ -164,51 +154,51 @@
                 textElement.innerHTML += char;
             }
             index++;
-            // 自動向下滾動以顯示最新文字
+            // 讓手機自動滾動到最下方
             const content = document.getElementById('cardContent');
             content.scrollTop = content.scrollHeight;
-            
             setTimeout(typeText, typingSpeed);
         } else {
             cursorElement.style.display = 'none'; 
         }
     }
 
-    // 啟動函數：音訊解鎖與動畫觸發
-    function startSequence() {
+    // 手機啟動的關鍵函數
+    function handleInteraction() {
         if (hasStarted) return;
         hasStarted = true;
 
-        // 播放音樂
-        bgm.volume = 0.5;
-        let playPromise = bgm.play();
+        console.log("偵測到點擊，啟動音訊與動畫...");
+        
+        // 1. 立即解鎖音訊 (這是手機成功的關鍵)
+        bgm.muted = false;
+        const playPromise = bgm.play();
 
-        // 處理播放結果
         if (playPromise !== undefined) {
             playPromise.then(() => {
-                console.log("音樂成功解鎖並播放");
-            }).catch(error => {
-                console.log("播放被攔截，這通常發生在手機未點擊前:", error);
+                console.log("手機音訊播放成功");
+            }).catch(e => {
+                console.error("播放失敗，請檢查靜音鍵:", e);
             });
         }
 
-        // 啟動翻頁動畫
+        // 2. 執行翻卡動畫
         cardWrapper.classList.add('open');
         
-        // 延遲後開始緩慢打字
+        // 3. 延遲後開始緩慢打字
         setTimeout(() => {
             textElement.innerHTML = '';
             typeText();
         }, 1200); 
     }
 
-    // 關鍵：監聽「點擊」與「觸摸」事件來繞過手機自動播放限制
-    document.addEventListener('click', startSequence);
-    document.addEventListener('touchstart', startSequence);
+    // 監聽電腦點擊與手機觸碰
+    document.addEventListener('mousedown', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction, { passive: false });
 
-    // 備案：4秒後自動嘗試啟動 (若使用者沒點擊，此時音樂可能仍無聲，直到點擊發生)
+    // 備案：萬一使用者沒點，4秒後嘗試啟動（通常會無聲，直到下次點擊）
     window.onload = function() {
-        setTimeout(startSequence, 4000);
+        setTimeout(handleInteraction, 4000);
     }
 </script>
 
