@@ -15,6 +15,7 @@
             font-family: 'Georgia', 'Microsoft JhengHei', serif;
             padding: 20px;
             overflow: hidden;
+            touch-action: manipulation;
         }
         .card-wrapper {
             width: 100%;
@@ -22,7 +23,6 @@
             height: 480px;
             position: relative;
             perspective: 1000px;
-            cursor: pointer;
         }
         .card-cover {
             position: absolute;
@@ -41,6 +41,7 @@
             padding: 20px;
             backface-visibility: hidden;
             box-sizing: border-box;
+            cursor: pointer;
         }
         .card-content {
             position: absolute;
@@ -62,21 +63,21 @@
         .card-wrapper.open .card-content { transform: rotateY(0deg); opacity: 1; }
         #typing-text { font-size: 1.05em; color: #1e4d2b; line-height: 1.8; margin: 0; }
         .hint-text { margin-top: 25px; font-size: 1em; color: #ffeb3b; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
     </style>
 </head>
-<body onclick="startApp()" ontouchstart="startApp()">
+<body>
 
 <audio id="bgm" loop preload="auto">
     <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 
 <div class="card-wrapper" id="cardWrapper">
-    <div class="card-cover">
+    <div class="card-cover" onclick="openCard()">
         <h2>🎄 聖誕新年特別問候 🎄</h2>
         <p>（想說給你聽）</p>
-        <div class="hint-text">👉 點擊螢幕任何地方開啟音樂 👈<br>
-        <small style="font-size: 0.7em; opacity: 0.8;">(手機請確認關閉靜音模式)</small></div>
+        <div class="hint-text">👉 點擊卡片開啟音樂與文字 👈<br>
+        <small style="font-size: 0.7em; opacity: 0.9;">(請確認手機側邊靜音開關已關閉)</small></div>
     </div>
     
     <div class="card-content" id="cardContent">
@@ -99,36 +100,29 @@
             let char = textToType.charAt(index);
             textElement.innerHTML += (char === '\n') ? '<br>' : char;
             index++;
-            document.getElementById('cardContent').scrollTop = document.getElementById('cardContent').scrollHeight;
+            const content = document.getElementById('cardContent');
+            content.scrollTop = content.scrollHeight;
             setTimeout(typeText, typingSpeed);
         }
     }
 
-    // 終極啟動函數：點擊 body 任何地方都會觸發
-    function startApp() {
+    function openCard() {
         if (hasStarted) return;
         hasStarted = true;
 
-        // 1. 解鎖並播放
-        bgm.muted = false;
+        // 核心：在使用者點擊的一瞬間同時觸發播放
         bgm.play().then(() => {
-            console.log("播放成功");
+            console.log("Audio playing");
         }).catch(e => {
-            console.log("播放攔截:", e);
+            console.log("Audio blocked", e);
         });
 
-        // 2. 顯示卡片
         cardWrapper.classList.add('open');
         
-        // 3. 開始打字
-        setTimeout(typeText, 1200); 
-    }
-
-    // 自動啟動備案 (電腦端)
-    window.onload = function() {
         setTimeout(() => {
-            if (!hasStarted) startApp();
-        }, 3000);
+            textElement.innerHTML = '';
+            typeText();
+        }, 1200); 
     }
 </script>
 </body>
