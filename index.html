@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>飛鴿傳信  <title>
+    <title>飛鴿傳信</title>
     <style>
-        /* CSS 样式部分：节日主题和卡片翻转效果 */
         body {
-            /* 绿色背景 */
             background: linear-gradient(135deg, #1e4d2b, #38761d);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            font-family: 'Georgia', serif;
+            font-family: 'Georgia', 'Microsoft JhengHei', serif;
             padding: 20px;
+            overflow: hidden;
+            cursor: pointer; /* 提示使用者可以點擊 */
         }
 
         .card-wrapper {
             width: 90%;
             max-width: 600px;
-            height: 400px;
+            height: 450px;
             position: relative;
             perspective: 1000px;
         }
 
-        /* 封面样式：圣诞红 */
         .card-cover {
+            position: absolute;
+            z-index: 2;
             width: 100%;
             height: 100%;
             background-color: #c0392b;
@@ -38,20 +39,13 @@
             align-items: center;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            /* 取消 pointer-events，因为现在是自动运行 */
-            pointer-events: none; 
-            transition: transform 0.8s, opacity 0.8s;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
             text-align: center;
             padding: 20px;
+            backface-visibility: hidden;
+            box-sizing: border-box;
         }
 
-        .card-cover h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px #a83023;
-        }
-
-        /* 内容样式：卡纸色背景 */
         .card-content {
             position: absolute;
             top: 0;
@@ -59,18 +53,18 @@
             height: 100%;
             background: #fdfae7;
             color: #333;
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             opacity: 0; 
             transform: rotateY(-180deg); 
-            transition: transform 0.8s, opacity 0.8s;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
             white-space: pre-wrap;
             text-align: left;
             overflow-y: auto;
+            box-sizing: border-box;
         }
 
-        /* 打开卡片时的动画效果 */
         .card-wrapper.open .card-cover {
             transform: rotateY(180deg);
             opacity: 0;
@@ -81,20 +75,20 @@
             opacity: 1;
         }
 
-        /* 打字机文本样式 */
         #typing-text {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #1e4d2b; 
             line-height: 1.8;
+            margin: 0;
         }
 
-        /* 光标闪烁动画 */
         .cursor {
             display: inline-block;
             width: 3px;
             height: 1.2em;
             background-color: gold; 
             margin-left: 5px;
+            vertical-align: middle;
             animation: blink 1s step-end infinite; 
         }
 
@@ -102,43 +96,52 @@
             from, to { opacity: 0; }
             50% { opacity: 1; }
         }
+
+        /* 底部提示文字 */
+        .click-hint {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
 
+<audio id="bgm" loop>
+    <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+
 <div class="card-wrapper" id="cardWrapper">
-    
     <div class="card-cover" id="cardCover">
         <h2>🎄 聖誕新年特別問候 🎄</h2>
         <p>（想說給你聽）</p>
-        <p style="margin-top: 15px; font-size: 1.2em;">卡片將自動打開...</p>
+        <p style="margin-top: 25px; font-size: 1.2em; color: #ffeb3b; font-weight: bold;">請點擊卡片開啟驚喜 ✨</p>
     </div>
     
     <div class="card-content" id="cardContent">
-        <h1 id="typing-text"></h1>
-        <span class="cursor"></span>
+        <p id="typing-text"></p><span class="cursor"></span>
     </div>
-
 </div>
 
+<div class="click-hint">點擊畫面任何地方以播放音樂</div>
+
 <script>
-    // JavaScript 逻辑部分
-    
-    // 【您的文章内容】
     const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遣詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。\n\n Ps現在儼然可以拋棄Excel啦!與AI協作的GAS會更便捷精確😊😊\n\n 期待與你的再次相遇😄😄"; 
 
     const cardWrapper = document.getElementById('cardWrapper');
     const textElement = document.getElementById('typing-text');
     const cursorElement = document.querySelector('.cursor');
+    const bgm = document.getElementById('bgm');
 
-    const typingSpeed = 60; 
+    // 打字速度：150ms (慢速，更有氛圍)
+    const typingSpeed = 150; 
     let index = 0;
+    let hasStarted = false;
 
-    // 1. 打字机函数
     function typeText() {
         if (index < textToType.length) {
             let char = textToType.charAt(index);
-            
             if (char === '\n') {
                 textElement.innerHTML += '<br>';
             } else {
@@ -151,24 +154,33 @@
         }
     }
 
-    // 2. 自动启动动画函数
-    function startAnimationAutomatically() {
-        // 触发 CSS 动画 (卡片翻转)
+    // 啟動函數：這是解鎖音訊的關鍵
+    function startSequence() {
+        if (hasStarted) return;
+        hasStarted = true;
+
+        // 隱藏提示文字
+        const hint = document.querySelector('.click-hint');
+        if(hint) hint.style.display = 'none';
+
+        // 播放音樂
+        bgm.volume = 0.4;
+        bgm.play().catch(e => console.log("播放失敗:", e));
+
+        // 開卡動畫
         cardWrapper.classList.add('open');
         
-        // 延时 2000ms，等待翻转动画完成后开始打字
+        // 延遲開始打字
         setTimeout(() => {
-            textElement.innerHTML = ''; // 清空可能的初始内容
+            textElement.innerHTML = '';
             typeText();
-        }, 2000); 
+        }, 1500); 
     }
 
-    // 3. 页面加载完成后，在 4 秒后自动开始动画
-    window.onload = function() {
-        setTimeout(startAnimationAutomatically, 4000); 
-    }
+    // 監聽點擊與觸摸 (手機與電腦皆適用)
+    document.addEventListener('click', startSequence);
+    document.addEventListener('touchstart', startSequence);
 </script>
 
 </body>
-
 </html>
