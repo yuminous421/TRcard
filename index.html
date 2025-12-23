@@ -14,16 +14,32 @@
             margin: 0;
             font-family: 'Georgia', 'Microsoft JhengHei', serif;
             padding: 20px;
-            overflow: hidden;
+            overflow-y: auto;
             touch-action: manipulation;
+            box-sizing: border-box;
         }
-        .card-wrapper {
+
+        /* 外層容器 */
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
             width: 100%;
-            max-width: 500px;
+            max-width: 1000px;
+        }
+
+        /* 卡片設定 */
+        .card-wrapper {
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 450px;
             height: 480px;
             position: relative;
             perspective: 1000px;
         }
+
         .card-cover {
             position: absolute;
             z-index: 2;
@@ -43,6 +59,7 @@
             box-sizing: border-box;
             cursor: pointer;
         }
+
         .card-content {
             position: absolute;
             top: 0; width: 100%; height: 100%;
@@ -59,24 +76,86 @@
             overflow-y: auto;
             box-sizing: border-box;
         }
+
         .card-wrapper.open .card-cover { transform: rotateY(180deg); opacity: 0; }
         .card-wrapper.open .card-content { transform: rotateY(0deg); opacity: 1; }
         
         #typing-text { font-size: 1.05em; color: #1e4d2b; line-height: 1.8; margin: 0; }
         
-        /* 新增：Ps 文字的專屬樣式 */
         .ps-text {
             display: block;
             margin-top: 15px;
-            font-size: 0.85em; /* 字體縮小 */
-            color: #555;      /* 顏色變淡 */
-            font-family: 'PingFang TC', 'Heiti TC', sans-serif; /* 換成黑體風格 */
+            font-size: 0.85em;
+            color: #555;
+            font-family: 'PingFang TC', 'Heiti TC', sans-serif;
             border-top: 1px dashed #ccc;
             padding-top: 10px;
         }
 
         .hint-text { margin-top: 25px; font-size: 1em; color: #ffeb3b; font-weight: bold; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+        /* 按鈕群組 */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 220px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 25px;
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 1.1em;
+        }
+
+        /* 影片按鈕：金色 */
+        .video-btn {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+        }
+
+        /* 網址按鈕：深紅色 */
+        .link-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-icon { margin-right: 12px; font-size: 1.3em; }
+
+        /* 響應式設定 */
+        @media (max-width: 850px) {
+            .main-container {
+                flex-direction: column;
+                padding-bottom: 50px;
+            }
+            .card-wrapper {
+                max-width: 100%;
+                height: 450px;
+            }
+            .button-group {
+                width: 100%;
+                flex-direction: column; 
+                align-items: center;
+            }
+            .action-btn {
+                width: 80%; /* 手機版按鈕寬度 */
+                max-width: 300px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -85,31 +164,41 @@
     <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 
-<div class="card-wrapper" id="cardWrapper">
-    <div class="card-cover" onclick="openCard()">
-        <h2>🎄 聖誕新年特別問候 🎄</h2>
-        <p>（想說給你聽）</p>
-        <div class="hint-text">👉 點擊卡片開啟音樂與文字 👈<br>
-        <small style="font-size: 0.7em; opacity: 0.9;">(請確認手機的靜音開關已關閉)</small></div>
+<div class="main-container">
+    <div class="card-wrapper" id="cardWrapper">
+        <div class="card-cover" onclick="openCard()">
+            <h2>🎄 聖誕新年特別問候 🎄</h2>
+            <p>（想說給你聽）</p>
+            <div class="hint-text">👉 點擊卡片開啟音樂與文字 👈<br>
+            <small style="font-size: 0.7em; opacity: 0.9;">(請確認手機的靜音開關已關閉)</small></div>
+        </div>
+        
+        <div class="card-content" id="cardContent">
+            <p id="typing-text"></p>
+            <div id="ps-container"></div>
+        </div>
     </div>
-    
-    <div class="card-content" id="cardContent">
-        <p id="typing-text"></p>
-        <div id="ps-container"></div>
+
+    <div class="button-group">
+        <a href="https://drive.google.com/file/d/1nZlLKZsjaOuCpM0HKynp1iu8RlNtKfSc/view?usp=drive_link" target="_blank" class="action-btn video-btn">
+            <span class="btn-icon">🎬</span>臺南風采
+        </a>
+        <a href="https://yuminous421.github.io/temple/" target="_blank" class="action-btn link-btn">
+            <span class="btn-icon">🌐</span>雲林之美
+        </a>
     </div>
 </div>
 
 <script>
     const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遷詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。"; 
 
-    // 新增 Ps 內容
     const psText = "Ps 現在儼然可以拋棄 Excel 啦！與 AI 協作的 GAS 會更便捷精確 😊😊\n期待與你的再次相遇 😄😄（售後、嚮導還是可以 der）";
 
     const cardWrapper = document.getElementById('cardWrapper');
     const textElement = document.getElementById('typing-text');
     const psContainer = document.getElementById('ps-container');
     const bgm = document.getElementById('bgm');
-    const typingSpeed = 140; // 稍微調快一點點，不然讀者等太久
+    const typingSpeed = 100; 
     let index = 0;
     let hasStarted = false;
 
@@ -122,13 +211,11 @@
             content.scrollTop = content.scrollHeight;
             setTimeout(typeText, typingSpeed);
         } else {
-            //本文打完後，顯示 Ps 內容
             showPs();
         }
     }
 
     function showPs() {
-        // Ps 部分直接出現，或者用淡入效果
         psContainer.innerHTML = `<span class="ps-text">${psText.replace(/\n/g, '<br>')}</span>`;
         psContainer.style.opacity = 0;
         psContainer.style.transition = "opacity 2s";
@@ -142,15 +229,8 @@
     function openCard() {
         if (hasStarted) return;
         hasStarted = true;
-
-        bgm.play().then(() => {
-            console.log("Audio playing");
-        }).catch(e => {
-            console.log("Audio blocked", e);
-        });
-
+        bgm.play().catch(e => console.log("Audio blocked", e));
         cardWrapper.classList.add('open');
-        
         setTimeout(() => {
             textElement.innerHTML = '';
             typeText();
@@ -159,3 +239,4 @@
 </script>
 </body>
 </html>
+
