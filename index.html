@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>飛鴿傳信</title>
+    <title>飛鴿傳信 - 聖誕祝福</title>
     <style>
+        /* --- 基礎設定 --- */
         body {
-            background: linear-gradient(135deg, #1e4d2b, #38761d);
+            /* 背景改為更溫暖的聖誕紅綠漸層 */
+            background: linear-gradient(135deg, #0f3d24, #5e1414);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,18 +21,19 @@
             box-sizing: border-box;
         }
 
-        /* 外層容器 */
+        /* --- 外層容器 --- */
         .main-container {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 40px;
+            gap: 50px;
             width: 100%;
             max-width: 1000px;
+            padding-bottom: 30px;
         }
 
-        /* 卡片設定 */
+        /* --- 卡片設定 --- */
         .card-wrapper {
             flex-shrink: 0;
             width: 100%;
@@ -44,14 +47,16 @@
             position: absolute;
             z-index: 2;
             width: 100%; height: 100%;
-            background-color: #c0392b;
-            color: white;
+            /* 封面改為更有質感的深紅色 */
+            background-color: #8e1717;
+            color: #f0e6d2; /* 米色文字 */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 3px solid #d4af37; /* 金色邊框 */
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
             text-align: center;
             padding: 20px;
@@ -63,11 +68,13 @@
         .card-content {
             position: absolute;
             top: 0; width: 100%; height: 100%;
-            background: #fdfae7;
+            /* 內頁背景 */
+            background: #fffdf2;
             color: #333;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border: 2px solid #cba328; /* 內頁金色細邊 */
             opacity: 0;
             transform: rotateY(-180deg);
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
@@ -80,27 +87,49 @@
         .card-wrapper.open .card-cover { transform: rotateY(180deg); opacity: 0; }
         .card-wrapper.open .card-content { transform: rotateY(0deg); opacity: 1; }
         
-        #typing-text { font-size: 1.05em; color: #1e4d2b; line-height: 1.8; margin: 0; }
+        #typing-text { font-size: 1.08em; color: #2c4f32; line-height: 1.8; margin: 0; }
         
         .ps-text {
             display: block;
             margin-top: 15px;
-            font-size: 0.85em;
-            color: #555;
+            font-size: 0.9em;
+            color: #666;
             font-family: 'PingFang TC', 'Heiti TC', sans-serif;
-            border-top: 1px dashed #ccc;
-            padding-top: 10px;
+            border-top: 2px dashed #d4af37; /* 金色虛線 */
+            padding-top: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 8px;
         }
 
-        .hint-text { margin-top: 25px; font-size: 1em; color: #ffeb3b; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+        .hint-text { 
+            margin-top: 25px; 
+            font-size: 1em; 
+            color: #ffdb58; /* 更亮的金色提示 */
+            font-weight: bold; 
+            animation: pulse 1.5s infinite; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
 
-        /* 按鈕群組 */
+        /* --- 按鈕群組 (修改重點) --- */
         .button-group {
             display: flex;
             flex-direction: column;
             gap: 20px;
             min-width: 220px;
+            /* 初始狀態：隱藏且往下偏移 */
+            opacity: 0;
+            transform: translateY(30px);
+            pointer-events: none; /* 隱藏時不可點擊 */
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+        }
+
+        /* 新增一個 class 用來觸發顯示動畫 */
+        .button-group.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; /* 顯示後恢復可點擊 */
         }
 
         .action-btn {
@@ -110,37 +139,38 @@
             padding: 18px 25px;
             color: white;
             text-decoration: none;
-            border-radius: 15px;
+            border-radius: 50px; /* 變成圓角按鈕 */
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
             font-size: 1.1em;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
         }
 
-        /* 影片按鈕：金色 */
+        /* 影片按鈕：金色聖誕風 */
         .video-btn {
             background: linear-gradient(135deg, #d4af37, #b8860b);
         }
 
-        /* 網址按鈕：深紅色 */
+        /* 網址按鈕：紅色聖誕風 */
         .link-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(135deg, #c0392b, #a93226);
         }
 
         .action-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            filter: brightness(1.1);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); /* 金色光暈 */
+            border-color: #fff;
         }
 
-        .btn-icon { margin-right: 12px; font-size: 1.3em; }
+        .btn-icon { margin-right: 12px; font-size: 1.4em; }
 
-        /* 響應式設定 */
+        /* --- 響應式設定 --- */
         @media (max-width: 850px) {
             .main-container {
                 flex-direction: column;
-                padding-bottom: 50px;
+                gap: 40px;
             }
             .card-wrapper {
                 max-width: 100%;
@@ -148,12 +178,11 @@
             }
             .button-group {
                 width: 100%;
-                flex-direction: column; 
                 align-items: center;
             }
             .action-btn {
-                width: 80%; /* 手機版按鈕寬度 */
-                max-width: 300px;
+                width: 85%;
+                max-width: 320px;
             }
         }
     </style>
@@ -167,8 +196,9 @@
 <div class="main-container">
     <div class="card-wrapper" id="cardWrapper">
         <div class="card-cover" onclick="openCard()">
-            <h2>🎄 聖誕新年特別問候 🎄</h2>
-            <p>（想說給你聽）</p>
+            <h2 style="font-size: 1.8em; margin-bottom: 10px;">🎄 聖誕新年特別問候 🎄</h2>
+            <p style="font-size: 1.1em;">（想說給你聽）</p>
+            <div style="font-size: 3em; margin: 20px 0;">🎁</div>
             <div class="hint-text">👉 點擊卡片開啟音樂與文字 👈<br>
             <small style="font-size: 0.7em; opacity: 0.9;">(請確認手機的靜音開關已關閉)</small></div>
         </div>
@@ -179,26 +209,27 @@
         </div>
     </div>
 
-    <div class="button-group">
+    <div class="button-group" id="buttonGroup">
         <a href="https://drive.google.com/file/d/1nZlLKZsjaOuCpM0HKynp1iu8RlNtKfSc/view?usp=drive_link" target="_blank" class="action-btn video-btn">
-            <span class="btn-icon">🎬</span>臺南風采
+            <span class="btn-icon">🎁</span>臺南遊記
         </a>
         <a href="https://yuminous421.github.io/temple/" target="_blank" class="action-btn link-btn">
-            <span class="btn-icon">🌐</span>雲林之美
+            <span class="btn-icon">🦌</span>雲林人文
         </a>
     </div>
 </div>
 
 <script>
+    // 您的原始文字
     const textToType = "以富為岡-公門見聞\n\n初入職場總是深刻，在未踏入之前實屬一無所知，我們想像中軌道業的從業人員多在車站車上，而新的場域屬於後勤的供料單位，在過程中的感受更為不同。\n\n總說人在公門好修行，但初入的我卻很是無助，有關和廠商的接洽聯繫物件損壞及領取的尋覓，都是一項需要歸納統整的任務，更不用說公部門的一大議題「公文」，未曾接觸過總是無法理解整個書寫架構及須謹慎用字遷詞的部分，幸運的是，遇到一群可愛的人兒，就像在大雨中撐著傘向我走來般的溫馨，也許在職務區分上未能協助全貌，但總使人更加清楚方向，印象中最困難的便是有關財產盤點一事，零零總總上千筆需要盤查確認並編纂，在人員異動後猶為嚴峻，畢竟非權責單位僅是使用而未必歸位或更新。\n\n在整個過程中除了學習到許多有別於過往知能的技能，同時也加深了與人互動進退得宜的人際禮節，同時因應科技化的浪潮即便是公部門也可以創新精進，藉由得空時間去整理歸納簡單的內部小程序（VBA），在於物件領用的控管上總是方便了不少，也許每位小白都曾還懷著不安的心，但只要是態度正確且勇於發問，終究會收穫到不少技能且是帶得走的能力。"; 
-
     const psText = "Ps 現在儼然可以拋棄 Excel 啦！與 AI 協作的 GAS 會更便捷精確 😊😊\n期待與你的再次相遇 😄😄（售後、嚮導還是可以 der）";
 
     const cardWrapper = document.getElementById('cardWrapper');
     const textElement = document.getElementById('typing-text');
     const psContainer = document.getElementById('ps-container');
+    const buttonGroup = document.getElementById('buttonGroup'); // 取得按鈕群組
     const bgm = document.getElementById('bgm');
-    const typingSpeed = 100; 
+    const typingSpeed = 90; // 稍微調快一點點速度
     let index = 0;
     let hasStarted = false;
 
@@ -207,23 +238,43 @@
             let char = textToType.charAt(index);
             textElement.innerHTML += (char === '\n') ? '<br>' : char;
             index++;
-            const content = document.getElementById('cardContent');
-            content.scrollTop = content.scrollHeight;
+            scrollToBottom();
             setTimeout(typeText, typingSpeed);
         } else {
-            showPs();
+            // 文字打完後，顯示 PS 並準備顯示按鈕
+            showPsAndButtons();
         }
     }
 
-    function showPs() {
+    function showPsAndButtons() {
+        // 1. 顯示 PS 區域
         psContainer.innerHTML = `<span class="ps-text">${psText.replace(/\n/g, '<br>')}</span>`;
         psContainer.style.opacity = 0;
-        psContainer.style.transition = "opacity 2s";
+        psContainer.style.transition = "opacity 1.5s";
+        
         setTimeout(() => {
             psContainer.style.opacity = 1;
-            const content = document.getElementById('cardContent');
-            content.scrollTop = content.scrollHeight;
+            scrollToBottom();
+
+            // 2. PS 出現 1.5 秒後，再讓按鈕浮現
+            setTimeout(() => {
+                buttonGroup.classList.add('visible'); // 加上 visible class 觸發 CSS 動畫
+                
+                // 手機版特別處理：按鈕出現後自動捲動到底部，確保使用者看到
+                if (window.innerWidth <= 850) {
+                    setTimeout(() => {
+                        document.body.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, 500);
+                }
+            }, 1500); // 這裡控制按鈕延遲多久出現
+
         }, 100);
+    }
+
+    // 輔助函式：確保卡片內容捲動到底部
+    function scrollToBottom() {
+        const content = document.getElementById('cardContent');
+        content.scrollTop = content.scrollHeight;
     }
 
     function openCard() {
@@ -231,10 +282,11 @@
         hasStarted = true;
         bgm.play().catch(e => console.log("Audio blocked", e));
         cardWrapper.classList.add('open');
+        // 卡片翻開 1 秒後開始打字
         setTimeout(() => {
             textElement.innerHTML = '';
             typeText();
-        }, 1200); 
+        }, 1000); 
     }
 </script>
 </body>
